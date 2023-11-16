@@ -17,8 +17,21 @@ def presidentNameExtract():
     return presidentList
 
 
-firstnames = {"Chirac": "Jacques", "Giscard d'Estaing": "Valéry", "Hollande": "François", "Macron": "Emmanuel", "Mitterrand": "François"}
+firstnames = {"Chirac": "Jacques", "Giscard dEstaing": "Valéry", "Hollande": "François", "Macron": "Emmanuel", "Mitterrand": "François", "Sarkozy": "Nicolas"}
+
 
 def full_names():
+    namae = []
     for name in presidentNameExtract():
-        print(f"{firstnames[name]} {name}")
+        namae.append(f"{firstnames[name]} {name}")
+
+    tmp = []
+    for i in range(len(namae)):
+        if namae[i] != namae[i-1]:
+            tmp.append(namae[i])
+
+    for name in tmp:
+        print(name)
+
+
+full_names()
