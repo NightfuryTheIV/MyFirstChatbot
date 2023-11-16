@@ -6,12 +6,12 @@ speech = ["Nomination_Chirac1.txt","Nomination_Chirac2.txt","Nomination_Giscard 
 
 
 def presidentNameExtract():
-    presidentName = ""
     presidentList = []
     for i in speech:
         presidentName = i[11:]
-        if 1 or 2 in President_name:
-            President_name=President_name[:-5]
+        if "1" in presidentName or "2" in presidentName:
+            presidentName = presidentName[:-5]
         else:
-            President_name=President_name[:-4]
-        print (President_name)
+            presidentName = presidentName[:-4]
+        presidentList.append(presidentName)
+    return presidentList
