@@ -1,1 +1,2 @@
-nkjnjk
+def yoo():
+    pass
