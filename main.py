@@ -18,3 +18,7 @@ def presidentNameExtract():
 
 
 firstnames = {"Chirac": "Jacques", "Giscard d'Estaing": "Valéry", "Hollande": "François", "Macron": "Emmanuel", "Mitterrand": "François"}
+
+def full_names():
+    for name in presidentNameExtract():
+        print(f"{firstnames[name]} {name}")
