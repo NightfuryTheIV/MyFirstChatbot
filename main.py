@@ -35,3 +35,5 @@ def full_names():
 
 
 full_names()
+
+# faudra revoir la fonciton 2 pq apparemment faut que ce soit une vraier fonction ou qqch
