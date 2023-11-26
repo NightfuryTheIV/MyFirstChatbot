@@ -1,8 +1,8 @@
+def presidentNameExtract(listofspeech:list):
+    names = []
+    for filepath in listofspeech:
+        names.append(os.path.basename(filepath)[:-4].split("_")[1]) 
+        # the os.path part is to get only the entire file name, and the split() part is to get rid of "Nomination_"
 
-def extract_name_president(name):
-    president_name = name[11:]
-    if ("1" in president_name) or ("2" in president_name):
-        president_last_name = president_name[:-5]
-    else:
-        president_last_name = president_name[:-4]
-    return president_last_name
+    last_name_of_president = no_double(names)
+    return last_name_of_president
