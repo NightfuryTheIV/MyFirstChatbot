@@ -1,4 +1,3 @@
-import os.path
 from os import path
 speech = [".\\speeches\\Nomination_Chirac1.txt",".\\speeches\\Nomination_Chirac2.txt",".\\speeches\\Nomination_Giscard dEstaing.txt",".\\speeches\\Nomination_Hollande.txt",".\\speeches\\Nomination_Macron.txt",".\\speeches\\Nomination_Mitterrand1.txt",".\\speeches\\Nomination_Mitterrand2.txt",".\\speeches\\Nomination_Sarkozy.txt"]
 
