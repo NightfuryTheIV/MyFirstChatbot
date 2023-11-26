@@ -67,3 +67,12 @@ def TF(text:str):
         else:
             frequency[word] += 1
     return frequency
+
+
+def IDF1(freq:dict):
+    words = list(freq.keys())
+    weight = {}
+    for word in words:
+        idf = math.log(1/freq[word])
+        weight[word] = idf
+    return weight
