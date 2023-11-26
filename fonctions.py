@@ -145,3 +145,4 @@ def TF_IDF(directory):
     matrix = [[values[j][i] for j in range(len(values)) for i in range(len(values[0]))]]
 
     return matrix
+
