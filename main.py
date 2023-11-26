@@ -52,8 +52,6 @@ def clean_text(text):
             char = ' '
 
         cleaned_text += char
-
-    print(cleaned_text)
     return cleaned_text
 
 
@@ -69,10 +67,37 @@ def TF(text:str):
     return frequency
 
 
-def IDF1(freq:dict):
-    words = list(freq.keys())
-    weight = {}
-    for word in words:
-        idf = math.log(1/freq[word])
-        weight[word] = idf
-    return weight
+def IDFproto(directory):
+    file_names = []
+    for filename in os.listdir(directory):
+        if filename.endswith("txt"):
+            file_names.append(filename)
+    # Getting a list of all the files in the folder
+
+    idf = {}
+    total_words = []
+    for text in file_names:
+        f = open(f".\\{directory}\\{text}", "r")
+        for line in f.readlines():
+            for elt in list(TF(line).keys()):
+                if elt not in total_words:
+                    total_words.append(elt)
+
+    # This is only to have a list of all the words in all the files
+
+    for word in total_words:
+        total_word_occurrence = 0
+        for file in file_names:
+            f = open(f".\\{directory}\\{file}", "r")
+            line = f.readline()
+            found = False
+            while line != "" and found is False:
+                if word in line:
+                    found = True
+                    total_word_occurrence += 1
+
+        idf[word] = math.log(len(file_names)/total_word_occurrence)
+    return idf
+
+
+print(IDFproto("speeches"))
