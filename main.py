@@ -67,7 +67,7 @@ def TF(text:str):
     return frequency
 
 
-def IDFproto(directory):
+def IDF(directory):
     file_names = []
     for filename in os.listdir(directory):
         if filename.endswith("txt"):
@@ -82,7 +82,6 @@ def IDFproto(directory):
             for elt in list(TF(line).keys()):
                 if elt not in total_words:
                     total_words.append(elt)
-
     # This is only to have a list of all the words in all the files
 
     for word in total_words:
@@ -100,4 +99,4 @@ def IDFproto(directory):
     return idf
 
 
-print(IDFproto("speeches"))
+def TFIDF():
