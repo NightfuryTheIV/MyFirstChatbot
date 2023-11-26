@@ -70,36 +70,51 @@ def TF(text:str):
     return frequency
 
 
+
 def IDF(directory):
-    file_names = []
+    doc_frequency = {}
+    total_documents = 0
+
     for filename in os.listdir(directory):
         if filename.endswith("txt"):
-            file_names.append(filename)
-    # Getting a list of all the files in the folder
+            file_path = os.path.join(directory, filename)
+            with open(file_path, 'r') as file:
+                unique_words_in_doc = set()  # Set used to discard duplicates
+
+                for line in file:
+                    words = line.strip().split()
+                    unique_words_in_doc.update(words)
+
+                # Update the overall document frequency dictionary
+                for word in unique_words_in_doc:
+                    if word in doc_frequency:
+                        doc_frequency[word] += 1
+                    else:
+                        doc_frequency[word] = 1
+
+                total_documents += 1
 
     idf = {}
-    total_words = []
-    for text in file_names:
-        f = open(f".\\{directory}\\{text}", "r")
-        for line in f.readlines():
-            for elt in list(TF(line).keys()):
-                if elt not in total_words:
-                    total_words.append(elt)
-    # This is only to have a list of all the words in all the files
 
-    for word in total_words:
-        total_word_occurrence = 0
-        for file in file_names:
-            f = open(f".\\{directory}\\{file}", "r")
-            line = f.readline()
-            found = False
-            while line != "" and found is False:
-                if word in line:
-                    found = True
-                    total_word_occurrence += 1
+    for single_word, frequency in doc_frequency.items():
+        # Calculate the inverse document frequency (IDF) for each word
+        idfscore = math.log10(total_documents / frequency)
+        idf[single_word] = idfscore
 
-        idf[word] = math.log(len(file_names)/total_word_occurrence)
     return idf
 
 
-def TFIDF():
+def TFIDF(directory):
+    tfidf_matrix = [[]]
+    for row in range(len(IDF(directory))):
+        tmp_list = []
+        for column in range(len(os.listdir(directory))):
+            f = open(f".\\{directory}\\{os.listdir(directory)[column]}")
+            lineTF = 0
+            for line in f.readlines():
+                if list(IDF(directory))[row] in line:
+                    lineTF += 1
+            tmp_list.append(lineTF*IDF(directory)[list(IDF(directory).keys())[row]])
+        tfidf_matrix.append(tmp_list)
+
+    return tfidf_matrix
