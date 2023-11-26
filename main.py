@@ -1,20 +1,22 @@
 import os
+import math
 speech = [".\\speeches\\Nomination_Chirac1.txt",".\\speeches\\Nomination_Chirac2.txt",".\\speeches\\Nomination_Giscard dEstaing.txt",".\\speeches\\Nomination_Hollande.txt",".\\speeches\\Nomination_Macron.txt",".\\speeches\\Nomination_Mitterrand1.txt",".\\speeches\\Nomination_Mitterrand2.txt",".\\speeches\\Nomination_Sarkozy.txt"]
 
 
 def no_double(lst:list):
     single = []
     for elt in lst:
-        if elt not in single:
+        if elt[-1] == "1" or elt[-1] == "2":
+            single.append(elt[:-1])
+        else:
             single.append(elt)
 
     single2 = []
     for elt in single:
-        if elt[-1] == "1" or elt[-1] == "2":
-            single2.append(elt[:-1])
-        else:
+        if elt not in single2:
             single2.append(elt)
     return single2
+
 # This function will be used to avoid duplicates
 
 
