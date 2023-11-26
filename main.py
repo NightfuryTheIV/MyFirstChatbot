@@ -1,10 +1,18 @@
-def yoo():
-    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+import os.path
+from os import path
+speech = [".\\.idea\\inspectionProfiles\\Nomination_Chirac1.txt",".\\.idea\\inspectionProfiles\\Nomination_Chirac2.txt",".\\.idea\\inspectionProfiles\\Nomination_Giscard dEstaing.txt",".\\.idea\\inspectionProfiles\\Nomination_Hollande.txt",".\\.idea\\inspectionProfiles\\Nomination_Macron.txt",".\\.idea\\inspectionProfiles\\Nomination_Mitterrand1.txt",".\\.idea\\inspectionProfiles\\Nomination_Mitterrand2.txt",".\\.idea\\inspectionProfiles\\Nomination_Sarkozy.txt"]
 
 
-speech = ["Nomination_Chirac1.txt","Nomination_Chirac2.txt","Nomination_Giscard dEstaing.txt","Nomination_Hollande.txt","Nomination_Macron.txt","Nomination_Mitterrand1.txt","Nomination_Mitterrand2.txt","Nomination_Sarkozy.txt"]
+def prototype(listofspeech:list):
+    names = []
+    for filepath in listofspeech:
+        names.append(os.path.basename(filepath)[:-4].split("_")[1])
+    return names
 
 
+prototype(speech)
+
+"""
 def presidentNameExtract():
     presidentList = []
     for i in speech:
@@ -35,5 +43,5 @@ def full_names():
 
 
 full_names()
-
+"""
 # faudra revoir la fonciton 2 pq apparemment faut que ce soit une vraier fonction ou qqch
