@@ -52,3 +52,6 @@ def clean_text(text):
     return cleaned_text
 
 # faudra revoir la fonciton 2 pq apparemment faut que ce soit une vraier fonction ou qqch
+
+
+
