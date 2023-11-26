@@ -42,15 +42,14 @@ display_full_names()
 def clean_text(text):
     cleaned_text = ""
     for char in text:
-        # Convert uppercase characters to lowercase
         if char.isalpha() and char.isupper():
             char = char.lower()
 
-        # Replace special characters with space
+        # Checking if the character is a special symbol
         if not char.isalnum():
             char = ' '
 
         cleaned_text += char
 
-    print (cleaned_text)
+    print(cleaned_text)
     return cleaned_text
