@@ -1,36 +1,38 @@
+from os import path
+speech = [".\\speeches\\Nomination_Chirac1.txt",".\\speeches\\Nomination_Chirac2.txt",".\\speeches\\Nomination_Giscard dEstaing.txt",".\\speeches\\Nomination_Hollande.txt",".\\speeches\\Nomination_Macron.txt",".\\speeches\\Nomination_Mitterrand1.txt",".\\speeches\\Nomination_Mitterrand2.txt",".\\speeches\\Nomination_Sarkozy.txt"]
 
-speech = ["Nomination_Chirac1.txt","Nomination_Chirac2.txt","Nomination_Giscard dEstaing.txt","Nomination_Hollande.txt","Nomination_Macron.txt","Nomination_Mitterrand1.txt","Nomination_Mitterrand2.txt","Nomination_Sarkozy.txt"]
 
+def no_double(lst:list):
+    single = []
+    for elt in lst:
+        if elt not in single:
+            single.append(elt)
 
-def presidentNameExtract():
-    presidentList = []
-    for i in speech:
-        presidentName = i[11:]
-        if "1" in presidentName or "2" in presidentName:
-            presidentName = presidentName[:-5]
+    single2 = []
+    for elt in single:
+        if elt[-1] == "1" or elt[-1] == "2":
+            single2.append(elt[:-1])
         else:
-            presidentName = presidentName[:-4]
-        presidentList.append(presidentName)
-    return presidentList
+            single2.append(elt)
+    return single2
+# This function will be used to avoid duplicates
+
+def presidentNameExtract(listofspeech:list):
+    names = []
+    for filepath in listofspeech:
+        names.append(os.path.basename(filepath)[:-4].split("_")[1]) # the os.path part is to get only the entire file name, and the split() part is to get rid of "Nomination_"
+
+    names_nodouble = no_double(names)
+    return names_nodouble
 
 
 firstnamespresidents = {"de Gaulle": "Charles", "Pompidou": "Georges", "Giscard dEstaing": "Valéry", "Mitterrand": "François", "Chirac": "Jacques", "Sarkozy": "Nicolas", "Hollande": "François", "Macron": "Emmanuel"}
+# This is the dictionary containing the names of all the French presidents of the Fifth Republic
 
 
-def full_names():
-    namae = []
-    for name in presidentNameExtract():
-        namae.append(f"{firstnamespresidents[name]} {name}")
-
-    tmp = []
-    for i in range(len(namae)):
-        if namae[i] != namae[i-1]:
-            tmp.append(namae[i])
-
-    for name in tmp:
-        print(name)
+def display_full_names():
+    for elt in presidentNameExtract(speech):
+        print(f"{firstnamespresidents[elt]} {elt}")
 
 
-full_names()
-
-# faudra revoir la fonciton 2 pq apparemment faut que ce soit une vraier fonction ou qqch
+display_full_names()
