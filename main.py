@@ -4,7 +4,7 @@ from features import *
 speech = os.listdir("speeches")
 
 clean_adding()
-TF_IDF("speeches")
+TF_IDF("cleaned")
 
 
 """
@@ -26,8 +26,8 @@ elif choix1 == 3:
 elif choix1 == 4:
     print(nation(TF_IDF("speeches")))
 elif choix1 == 5:
-    print("Work in Progress!")
+    print(find_first_president_to_mention_ecology_or_climate("speeches"))
 elif choix1 == 6:
-    print("Work in Progress!")
+    print(words_said_by_all_presidents(TF("speeches")))
 else:
     print("Exiting")
