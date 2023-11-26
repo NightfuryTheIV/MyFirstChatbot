@@ -1,3 +1,22 @@
+import math
+import os
+
+
+def no_double(lst:list):
+    single = []
+    for elt in lst:
+        if elt[-1] == "1" or elt[-1] == "2":
+            single.append(elt[:-1])
+        else:
+            single.append(elt)
+
+    single2 = []
+    for elt in single:
+        if elt not in single2:
+            single2.append(elt)
+    return single2
+
+
 def presidentNameExtract(listofspeech:list):
     names = []
     for filepath in listofspeech:
