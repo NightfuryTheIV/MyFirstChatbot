@@ -66,3 +66,35 @@ def nation(directory):  # feature 4
     print("The president that mentions the most 'nation' is ", maxi)
     return presidents
 
+
+
+def find_first_president_to_mention_ecology_or_climate(directory, cleaned_speeches):
+    os.chdir(directory)
+    president = []
+    file_names = cleaned_speeches
+    word_count = []
+    for i in range(8):
+        count = 0
+        with open(file_names[i], "r") as file:
+            for line in file:
+                words = line.split(" ")
+                for word in words:
+                    if word == "climat" or word == "écologie":
+                        president.append(file_names[i])
+                    else:
+                        count += 1
+            word_count.append(count)
+    lowest_count = min(word_count)
+    lowest_president = ''
+    for i in range(len(word_count)):
+        if word_count[i] <= lowest_count:
+            lowest_president = president[i]
+    parts = lowest_president.split("_")
+    president_name = ''
+    for part in parts:
+        if part != "Cleaned" and part != "Nomination" and part != "txt":
+            president_name = part.replace(".txt", "")
+            break
+    print(f"First president to speak of climat or écologie is {president_name}")
+    return president
+
