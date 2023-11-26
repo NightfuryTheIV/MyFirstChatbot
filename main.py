@@ -39,7 +39,6 @@ def display_full_names():
 display_full_names()
 
 
-
 def clean_text(text):
     cleaned_text = ""
     for char in text:
@@ -54,3 +53,15 @@ def clean_text(text):
 
     print(cleaned_text)
     return cleaned_text
+
+
+def TF(text:str):
+    frequency = {}
+    cleaned_text = clean_text(text)
+    words = cleaned_text.split(" ")
+    for word in words:
+        if word not in frequency:
+            frequency[word] = 1
+        else:
+            frequency[word] += 1
+    return frequency
