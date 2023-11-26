@@ -1,4 +1,4 @@
-from os import path
+import os
 speech = [".\\speeches\\Nomination_Chirac1.txt",".\\speeches\\Nomination_Chirac2.txt",".\\speeches\\Nomination_Giscard dEstaing.txt",".\\speeches\\Nomination_Hollande.txt",".\\speeches\\Nomination_Macron.txt",".\\speeches\\Nomination_Mitterrand1.txt",".\\speeches\\Nomination_Mitterrand2.txt",".\\speeches\\Nomination_Sarkozy.txt"]
 
 
@@ -16,6 +16,7 @@ def no_double(lst:list):
             single2.append(elt)
     return single2
 # This function will be used to avoid duplicates
+
 
 def presidentNameExtract(listofspeech:list):
     names = []
