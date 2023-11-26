@@ -2,7 +2,7 @@ import os
 from fonctions import *
 speech = os.listdir("speeches")
 
-
+TF_IDF("speeches")
 
 """
 #Features

@@ -50,7 +50,6 @@ def clean_text(text):
             char = ''
 
         cleaned_text += char
-    print("Text has been cleaned.")
     return cleaned_text
 
 
@@ -105,3 +104,38 @@ def IDF(directory):
         idfscore = math.log10(total_documents / frequency)
         idf[single_word] = idfscore
     return idf
+
+
+def TF_IDF(directory):
+    idf = IDF(directory)
+    file_names = os.listdir(f".\\cleaned")
+    nofiles = len(file_names)
+    tfidf = {}
+    os.chdir('cleaned')
+
+    for word in idf.keys():
+        tfidf[word] = []
+
+    for i in range(nofiles):
+        with open(file_names[i], "r", encoding="utf-8") as f:
+            tf = {}
+            for line in f:
+                dico_temp = TF(line)
+                for word in dico_temp.keys():
+                    if word not in tf.keys():
+                        tf[word] = dico_temp[word]
+                    else:
+                        tf[word] += dico_temp[word]
+            dico_tfidf = {}
+
+            for word in tf.keys():
+                word_tfidf = tf[word]*idf[word]
+                dico_tfidf[word] = word_tfidf
+
+            for word in idf.keys():
+                if word not in dico_tfidf.keys():
+                    tfidf[word].append(0)
+                else:
+                    tfidf[word].append(dico_tfidf[word])
+    os.chdir('..')
+    return tfidf
