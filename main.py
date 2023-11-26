@@ -1,6 +1,5 @@
 import os
-import math
-from fonctions import *
+from fonctions import clean_adding
 speech = os.listdir("speeches")
 
 
@@ -11,11 +10,11 @@ cleaned_speeches = ["Cleaned_Nomination_Chirac1.txt", "Cleaned_Nomination_Chirac
 
 directory = 'cleaned'
 
-presidents = presidentNameExtract(speech)
+# presidents = presidentNameExtract(speech)
 firstnamespresidents = {"de Gaulle": "Charles", "Pompidou": "Georges", "Giscard dEstaing": "Valéry", "Mitterrand": "François", "Chirac": "Jacques", "Sarkozy": "Nicolas", "Hollande": "François", "Macron": "Emmanuel"}
 # This is the dictionary containing the names of all the French presidents of the Fifth Republic
 
-
+"""
 #Lower case
 if __name__ == "main":
     input_folder = "speeches"
@@ -64,3 +63,6 @@ print(TF_IDF_highest_value_word(matrice_result))
 
 #Most repeted word by Chirac
 print(TF_IDF_most_word_repeat(matrice_result,"Chirac"))
+"""
+
+clean_adding()

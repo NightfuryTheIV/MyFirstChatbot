@@ -1,6 +1,5 @@
 import math
 import os
-from main import *
 
 
 def no_double(lst:list):
@@ -50,10 +49,13 @@ def clean_text(text):
     return cleaned_text
 
 
-def clean_adding(files):
-    for file in speech:
-        with open(f"Cleaned_{file}", "w", encoding="utf-8") as clean:
-            with open()
+def clean_adding():
+    for file in os.listdir("speeches"):
+        with open(f".\\cleaned\\Cleaned_{file}", "w", encoding="utf-8") as clean:
+            with open(f".\\speeches\\{file}", "r") as f:
+                for line in f.readlines():
+                    clean.write(clean_text(line))
+    return True
 
 
 def TF(text:str):
