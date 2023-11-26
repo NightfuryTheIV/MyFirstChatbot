@@ -1,6 +1,5 @@
-import os
+from os import listdir
 from fonctions import *
-from features import *
 speech = os.listdir("speeches")
 
 presidents = presidentNameExtract(speech)
