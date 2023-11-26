@@ -1,6 +1,6 @@
 import os
 import math
-speech = [".\\speeches\\Nomination_Chirac1.txt",".\\speeches\\Nomination_Chirac2.txt",".\\speeches\\Nomination_Giscard dEstaing.txt",".\\speeches\\Nomination_Hollande.txt",".\\speeches\\Nomination_Macron.txt",".\\speeches\\Nomination_Mitterrand1.txt",".\\speeches\\Nomination_Mitterrand2.txt",".\\speeches\\Nomination_Sarkozy.txt"]
+speech = os.listdir("speeches")
 
 
 def no_double(lst:list):
@@ -70,7 +70,6 @@ def TF(text:str):
     return frequency
 
 
-
 def IDF(directory):
     doc_frequency = {}
     total_documents = 0
@@ -78,10 +77,11 @@ def IDF(directory):
     for filename in os.listdir(directory):
         if filename.endswith("txt"):
             file_path = os.path.join(directory, filename)
-            with open(file_path, 'r') as file:
+            with open(file_path, 'r', encoding="utf-8") as file:
                 unique_words_in_doc = set()  # Set used to discard duplicates
 
                 for line in file:
+                    line = clean_text(line)
                     words = line.strip().split()
                     unique_words_in_doc.update(words)
 
@@ -95,26 +95,61 @@ def IDF(directory):
                 total_documents += 1
 
     idf = {}
-
     for single_word, frequency in doc_frequency.items():
         # Calculate the inverse document frequency (IDF) for each word
         idfscore = math.log10(total_documents / frequency)
         idf[single_word] = idfscore
-
     return idf
 
-
+"""
 def TFIDF(directory):
-    tfidf_matrix = [[]]
-    for row in range(len(IDF(directory))):
+    tfidf_matrix = []
+
+    for filename in os.listdir(directory):
+        if filename.endswith("txt"):
+            file_path = os.path.join(directory, filename)
+            with open(file_path, 'r') as file:
+                set_of_words = set()  # Set used to discard duplicates
+
+    for row in range(len(set_of_words)):
         tmp_list = []
         for column in range(len(os.listdir(directory))):
             f = open(f".\\{directory}\\{os.listdir(directory)[column]}")
             lineTF = 0
             for line in f.readlines():
-                if list(IDF(directory))[row] in line:
-                    lineTF += 1
+                lineTF += TF(line)[set_of_words[row]]
+            print(lineTF*IDF(directory)[list(IDF(directory).keys())[row]])
             tmp_list.append(lineTF*IDF(directory)[list(IDF(directory).keys())[row]])
         tfidf_matrix.append(tmp_list)
 
     return tfidf_matrix
+
+
+print(TFIDF("speeches")
+"""
+
+
+def TF_IDF(directory):
+    idf_dico = IDF(directory)
+    file_names = os.listdir(f".\\{directory}\\..\\cleaned")
+    nofiles = len(file_names)
+    tfidf = {}
+    os.chdir('cleaned')
+
+    for word in idf_dico.keys():
+        tfidf[word] = []
+
+    for i in range(nofiles):
+        with open(file_names[i], "r", encoding="utf-8") as f:
+            tf = {}
+            for line in f:
+                dico_temp = TF(line)
+                for word in dico_temp.keys():
+                    if word not in tf.keys():
+                        tf[word] = dico_temp[word]
+                    else:
+                        tf[word] += dico_temp[word]
+            dico_tfidf = {}
+
+            for word in tf.keys():
+                word_tfidf = tf[word]
