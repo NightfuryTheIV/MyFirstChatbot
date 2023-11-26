@@ -5,162 +5,83 @@ speech = os.listdir("speeches")
 #Presidents last name
 for i in speeches:
 
-def no_double(lst:list):
-    single = []
-    for elt in lst:
-        if elt[-1] == "1" or elt[-1] == "2":
-            single.append(elt[:-1])
-        else:
-            single.append(elt)
 
-    single2 = []
-    for elt in single:
-        if elt not in single2:
-            single2.append(elt)
-    return single2
-
-# This function will be used to avoid duplicates
-
-
-def presidentNameExtract(listofspeech:list):
-    names = []
-    for filepath in listofspeech:
-        names.append(os.path.basename(filepath)[:-4].split("_")[1]) # the os.path part is to get only the entire file name, and the split() part is to get rid of "Nomination_"
-
-    names_nodouble = no_double(names)
-    return names_nodouble
 
 
 firstnamespresidents = {"de Gaulle": "Charles", "Pompidou": "Georges", "Giscard dEstaing": "Valéry", "Mitterrand": "François", "Chirac": "Jacques", "Sarkozy": "Nicolas", "Hollande": "François", "Macron": "Emmanuel"}
 # This is the dictionary containing the names of all the French presidents of the Fifth Republic
 
 
-def display_full_names():
-    for elt in presidentNameExtract(speech):
-        print(f"{firstnamespresidents[elt]} {elt}")
+from fonction_Yrieix import *
+from fonctions_Benjamin import *
+
+speeches = ["Nomination_Chirac1.txt", "Nomination_Chirac2.txt", "Nomination_Giscard dEstaing.txt",
+            "Nomination_Hollande.txt", "Nomination_Macron.txt", "Nomination_Mitterrand1.txt",
+            "Nomination_Mitterrand2.txt", "Nomination_Sarkozy.txt"]
+
+cleaned_speeches = ["Cleaned_Nomination_Chirac1.txt", "Cleaned_Nomination_Chirac2.txt",
+                    "Cleaned_Nomination_Giscard dEstaing.txt", "Cleaned_Nomination_Hollande.txt",
+                    "Cleaned_Nomination_Macron.txt", "Cleaned_Nomination_Mitterrand1.txt",
+                    "Cleaned_Nomination_Mitterrand2.txt", "Cleaned_Nomination_Sarkozy.txt"]
+
+directory ='cleaned'
+
+last_name = []
+
+#Give last name
+for i in speeches:
+    last_name.append(extract_name_president(i))
+
+#Associate Names
+full_name = associating_names(last_name)
+for i in full_name:
+    print(i)
+
+#Lower case
+if name == "main":
+    input_folder = "speeches"
+    output_folder = "cleaned"
+    convert_to_lowercase_and_save(input_folder, output_folder)
 
 
-display_full_names()
+#Remove ponctuation
+for i in cleaned_speeches:
+    remove_ponctuation(i)
+print()
+print("Conversion to lowercase and saving completed.")
+print()
 
 
-def clean_text(text):
-    cleaned_text = ""
-    special_char = ['-',"'"]
-    for char in text:
-        if char.isalpha() and char.isupper():
-            char = char.lower()
+#TF
+for i in cleaned_speeches:
+    TF(i)
 
-        # Checking if the character is a special symbol
-        if char in special_char:
-            char = ' '
-        if char== '.' or char == '!' or char == '?':
-            char = ''
+#IDF
+IDF(directory)
 
-        cleaned_text += char
-    return cleaned_text
+#TF_IDF
+TF_IDF(directory)
+'''print(matrice_result)'''
+'''print(TF_IDF_values)'''
 
 
-def TF(text:str):
-    frequency = {}
-    cleaned_text = clean_text(text)
-    words = cleaned_text.split(" ")
-    for word in words:
-        if word not in frequency:
-            frequency[word] = 1
-        else:
-            frequency[word] += 1
-    return frequency
+#Features
+matrice_result = TF_IDF(directory)
 
+#Nonimportant
+print(TF_IDF_nonimportant_value(matrice_result))
 
-def IDF(directory):
-    doc_frequency = {}
-    total_documents = 0
+#Hightest value
+print(TF_IDF_highest_value(matrice_result))
 
-    for filename in os.listdir(directory):
-        if filename.endswith("txt"):
-            file_path = os.path.join(directory, filename)
-            with open(file_path, 'r', encoding="utf-8") as file:
-                unique_words_in_doc = set()  # Set used to discard duplicates
+#First person to speak of écology or climat
+eco(directory)
 
-                for line in file:
-                    line = clean_text(line)
-                    words = line.strip().split()
-                    unique_words_in_doc.update(words)
+#Words said by all président
+print("They are",All_said(matrice_result))
 
-                # Update the overall document frequency dictionary
-                for word in unique_words_in_doc:
-                    if word in doc_frequency:
-                        doc_frequency[word] += 1
-                    else:
-                        doc_frequency[word] = 1
+#Who spoke of Nation and the most
+print(TF_IDF_highest_value_word(matrice_result))
 
-                total_documents += 1
-
-    idf = {}
-    for single_word, frequency in doc_frequency.items():
-        # Calculate the inverse document frequency (IDF) for each word
-        idfscore = math.log10(total_documents / frequency)
-        idf[single_word] = idfscore
-    return idf
-
-"""
-def TFIDF(directory):
-    tfidf_matrix = []
-
-    for filename in os.listdir(directory):
-        if filename.endswith("txt"):
-            file_path = os.path.join(directory, filename)
-            with open(file_path, 'r') as file:
-                set_of_words = set()  # Set used to discard duplicates
-
-    for row in range(len(set_of_words)):
-        tmp_list = []
-        for column in range(len(os.listdir(directory))):
-            f = open(f".\\{directory}\\{os.listdir(directory)[column]}")
-            lineTF = 0
-            for line in f.readlines():
-                lineTF += TF(line)[set_of_words[row]]
-            print(lineTF*IDF(directory)[list(IDF(directory).keys())[row]])
-            tmp_list.append(lineTF*IDF(directory)[list(IDF(directory).keys())[row]])
-        tfidf_matrix.append(tmp_list)
-
-    return tfidf_matrix
-
-
-print(TFIDF("speeches")
-"""
-
-
-def TF_IDF(directory):
-    idf = IDF(directory)
-    file_names = os.listdir(f".\\{directory}\\..\\cleaned")
-    nofiles = len(file_names)
-    tfidf = {}
-    os.chdir('cleaned')
-
-    for word in idf.keys():
-        tfidf[word] = []
-
-    for i in range(nofiles):
-        with open(file_names[i], "r", encoding="utf-8") as f:
-            tf = {}
-            for line in f:
-                dico_temp = TF(line)
-                for word in dico_temp.keys():
-                    if word not in tf.keys():
-                        tf[word] = dico_temp[word]
-                    else:
-                        tf[word] += dico_temp[word]
-            dico_tfidf = {}
-
-            for word in tf.keys():
-                word_tfidf = tf[word]*idf[word]
-                dico_tfidf[word] = word_tfidf
-
-            for word in idf.keys():
-                if word not in dico_tfidf.keys():
-                    tfidf[word].append(0)
-                else:
-                    tfidf[word].append(dico_tfidf[word])
-    os.chdir('..')
-    return tfidf
+#Most repeted word by Chirac
+print(TF_IDF_most_word_repeat(matrice_result,"Chirac"))
