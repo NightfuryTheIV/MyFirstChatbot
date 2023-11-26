@@ -67,13 +67,12 @@ def nation(directory):  # feature 4
     return presidents
 
 
-
-def find_first_president_to_mention_ecology_or_climate(directory, cleaned_speeches):
+def find_first_president_to_mention_ecology_or_climate(directory):
     os.chdir(directory)
     president = []
-    file_names = cleaned_speeches
+    file_names = os.listdir("..\\MyFirstChatbot\\cleaned")
     word_count = []
-    for i in range(8):
+    for i in range(len(os.listdir(directory))):
         count = 0
         with open(file_names[i], "r") as file:
             for line in file:
@@ -96,5 +95,5 @@ def find_first_president_to_mention_ecology_or_climate(directory, cleaned_speech
             president_name = part.replace(".txt", "")
             break
     print(f"First president to speak of climat or écologie is {president_name}")
-    return president
+    return president_name
 
