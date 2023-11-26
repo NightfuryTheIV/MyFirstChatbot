@@ -97,3 +97,15 @@ def find_first_president_to_mention_ecology_or_climate(directory):
     print(f"First president to speak of climat or écologie is {president_name}")
     return president_name
 
+
+def words_said_by_all_presidents(dico):
+    list_all_said_words = []
+    presidents_count = len(dico)  # Assuming dico is a dictionary containing TF-IDF values for each president
+
+    for word, values in dico.items():
+        if sum(1 for value in values if value >= 0.0) == presidents_count and word not in TF_IDF_nonimportant_value(dico):
+            list_all_said_words.append(word)
+
+    words_count = len(list_all_said_words)
+    print(f"There are {words_count} words said by all presidents")
+    return list_all_said_words
