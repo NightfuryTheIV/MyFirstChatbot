@@ -103,7 +103,7 @@ def words_said_by_all_presidents(dico):
     presidents_count = len(dico)  # Assuming dico is a dictionary containing TF-IDF values for each president
 
     for word, values in dico.items():
-        if sum(1 for value in values if value >= 0.0) == presidents_count and word not in TF_IDF_nonimportant_value(dico):
+        if sum(1 for value in values if value >= 0.0) == presidents_count and word not in least_important_word(TF_IDF("speeches")):
             list_all_said_words.append(word)
 
     words_count = len(list_all_said_words)
