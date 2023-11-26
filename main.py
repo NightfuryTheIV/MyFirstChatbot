@@ -2,6 +2,8 @@ import os
 import math
 speech = os.listdir("speeches")
 
+#Presidents last name
+for i in speeches:
 
 def no_double(lst:list):
     single = []
