@@ -32,7 +32,7 @@ firstnamespresidents = {"de Gaulle": "Charles", "Pompidou": "Georges", "Giscard 
 
 
 def display_full_names():
-    for elt in presidentNameExtract(speech):
+    for elt in presidentNameExtract(os.listdir("speeches")):
         print(f"{firstnamespresidents[elt]} {elt}")
 
 
@@ -50,6 +50,7 @@ def clean_text(text):
             char = ''
 
         cleaned_text += char
+    print("Text has been cleaned.")
     return cleaned_text
 
 
