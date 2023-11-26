@@ -138,4 +138,10 @@ def TF_IDF(directory):
                 else:
                     tfidf[word].append(dico_tfidf[word])
     os.chdir('..')
-    return tfidf
+
+    # turning this tfidf dictionary into a usable matrix
+    keys = list(tfidf.keys())
+    values = list(tfidf.values())
+    matrix = [[values[j][i] for j in range(len(values)) for i in range(len(values[0]))]]
+
+    return matrix
