@@ -27,6 +27,10 @@ def presidentNameExtract(listofspeech:list):
     return last_name_of_president
 
 
+firstnamespresidents = {"de Gaulle": "Charles", "Pompidou": "Georges", "Giscard dEstaing": "Valéry", "Mitterrand": "François", "Chirac": "Jacques", "Sarkozy": "Nicolas", "Hollande": "François", "Macron": "Emmanuel"}
+# This is the dictionary containing the names of all the French presidents of the Fifth Republic
+
+
 def display_full_names():
     for elt in presidentNameExtract(speech):
         print(f"{firstnamespresidents[elt]} {elt}")

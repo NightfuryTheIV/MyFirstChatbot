@@ -11,8 +11,7 @@ cleaned_speeches = ["Cleaned_Nomination_Chirac1.txt", "Cleaned_Nomination_Chirac
 directory = 'cleaned'
 
 # presidents = presidentNameExtract(speech)
-firstnamespresidents = {"de Gaulle": "Charles", "Pompidou": "Georges", "Giscard dEstaing": "Valéry", "Mitterrand": "François", "Chirac": "Jacques", "Sarkozy": "Nicolas", "Hollande": "François", "Macron": "Emmanuel"}
-# This is the dictionary containing the names of all the French presidents of the Fifth Republic
+
 
 """
 #Lower case
