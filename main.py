@@ -43,13 +43,16 @@ display_full_names()
 
 def clean_text(text):
     cleaned_text = ""
+    special_char = ['-',"'"]
     for char in text:
         if char.isalpha() and char.isupper():
             char = char.lower()
 
         # Checking if the character is a special symbol
-        if not char.isalnum():
+        if char in special_char:
             char = ' '
+        if char== '.' or char == '!' or char == '?':
+            char = ''
 
         cleaned_text += char
     return cleaned_text
