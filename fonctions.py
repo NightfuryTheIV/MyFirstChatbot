@@ -1,5 +1,6 @@
 import math
 import os
+from main import *
 
 
 def no_double(lst:list):
@@ -32,9 +33,6 @@ def display_full_names():
         print(f"{firstnamespresidents[elt]} {elt}")
 
 
-display_full_names()
-
-
 def clean_text(text):
     cleaned_text = ""
     special_char = ['-',"'"]
@@ -50,6 +48,12 @@ def clean_text(text):
 
         cleaned_text += char
     return cleaned_text
+
+
+def clean_adding(files):
+    for file in speech:
+        with open(f"Cleaned_{file}", "w", encoding="utf-8") as clean:
+            with open()
 
 
 def TF(text:str):
