@@ -36,37 +36,60 @@ def display_full_names():
         print(f"{firstnamespresidents[elt]} {elt}")
 
 
-def clean_text(text):
-    cleaned_text = ""
-    special_char = ['-',"'"]
-    for char in text:
-        if char.isalpha() and char.isupper():
-            char = char.lower()
-
-        # Checking if the character is a special symbol
-        if char in special_char:
-            char = ' '
-        if char== '.' or char == '!' or char == '?':
-            char = ''
-
-        cleaned_text += char
-    return cleaned_text
+def remove_accents(input_text):
+    # Function we will use to clean the texts
+    accent_mapping = {
+        'é': 'e', 'è': 'e', 'ê': 'e', 'ë': 'e', 'à': 'a', 'â': 'a', 'ä': 'a', 'á': 'a',
+        'ô': 'o', 'ö': 'o', 'ó': 'o', 'ò': 'o', 'û': 'u', 'ü': 'u', 'ù': 'u', 'î': 'i',
+        'ï': 'i', 'í': 'i', 'ç': 'c',
+    }
+    return ''.join(accent_mapping.get(char, char) for char in input_text)
 
 
-def clean_adding():
-    for file in os.listdir("speeches"):
-        with open(f".\\cleaned\\Cleaned_{file}", "w", encoding="utf-8") as clean:
-            with open(f".\\speeches\\{file}", "r") as f:
-                for line in f.readlines():
-                    clean.write(clean_text(line))
-    return True
+def remove_punctuation(input_text):
+    # Function we will also use to clean the texts
+    punctuation_chars = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
+    translator = str.maketrans(punctuation_chars, ' ' * len(punctuation_chars))
+    return input_text.translate(translator)
 
 
-def TF(text:str):
+def clean_files(input_folder):
+    # Just checking if the cleaned folder exists
+    cleaned_folder_path = os.path.join(os.getcwd(), "cleaned")
+    if not os.path.exists(cleaned_folder_path):
+        os.makedirs(cleaned_folder_path)
+
+    # Listing all the files to clean
+    files = [file for file in os.listdir(input_folder) if file.endswith(".txt")]
+
+    for file_name in files:
+        # Input file path
+        input_file_path = os.path.join(input_folder, file_name)
+
+        # Output file path in the "cleaned" directory
+        output_file_path = os.path.join(cleaned_folder_path, file_name)
+
+        with open(input_file_path, 'r', encoding='utf-8') as input_file:
+            # Read the content of the file
+            content = input_file.read()
+
+            # Convert to lowercase
+            content = content.lower()
+
+            # Remove accents if necessary
+            content = remove_accents(content)
+
+            # Remove punctuation characters and replace with space
+            content = remove_punctuation(content)
+
+            # Write the cleaned content to the new file
+            with open(output_file_path, 'w', encoding='utf-8') as output_file:
+                output_file.write(content)
+
+
+def TF(text: str):
     frequency = {}
-    cleaned_text = clean_text(text)
-    words = cleaned_text.split(" ")
-    for word in words:
+    for word in text:
         if word not in frequency:
             frequency[word] = 1
         else:
@@ -106,6 +129,7 @@ def IDF(directory):
     return idf
 
 
+"""
 def TF_IDF(directory):
     idf = IDF(directory)
     file_names = os.listdir(f".\\cleaned")
@@ -146,10 +170,9 @@ def TF_IDF(directory):
 
     return matrix
 
+ 
+# FEATURES
 
-"""
-FEATURES
-"""
 matrixscore = TF_IDF("speeches")
 
 
@@ -260,3 +283,4 @@ def words_said_by_all_presidents(dico):
     words_count = len(list_all_said_words)
     print(f"There are {words_count} words said by all presidents")
     return list_all_said_words
+"""

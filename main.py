@@ -7,7 +7,7 @@ presidents = presidentNameExtract(speech)
 
 display_full_names()
 
-clean_adding()  # 4th and 5th points at once
+clean_adding()  # 4th and 5th steps at once
 
 # TF, IDF, and TF-IDF functions are in fonctions.py, from line 65 to line 147
 
