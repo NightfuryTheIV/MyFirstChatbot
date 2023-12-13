@@ -138,16 +138,16 @@ def IDF(directory):
 
 
 def TFIDF(directory):
-    rows = []*len(list(IDF(directory)))
     tfidf = []
-    for i in range(len(os.listdir(f".\\{directory}\\..\\cleaned"))):
-        tfidf.append(rows)
     # We now have a matrix of required size
 
     for filename in os.listdir(directory):
         if filename.endswith("txt"):
             file_path = os.path.join(directory, filename)
             with open(file_path, 'r', encoding="utf-8") as file:
+                tfidf.append(list(IDF(directory).values()))
+
+
 
 
 
