@@ -87,6 +87,14 @@ def clean_files(input_folder):
                 output_file.write(content)
 
 
+def simple_clean(input_text):
+    cleaned_text = input_text.lower()
+    cleaned_text = remove_accents(cleaned_text)
+    cleaned_text = remove_punctuation(cleaned_text)
+
+    return cleaned_text
+
+
 def TF(text: str):
     frequency = {}
     for word in text:
@@ -108,7 +116,7 @@ def IDF(directory):
                 unique_words_in_doc = set()  # Set used to discard duplicates
 
                 for line in file:
-                    line = clean_text(line)
+                    line = simple_clean(line)
                     words = line.strip().split()
                     unique_words_in_doc.update(words)
 
@@ -124,9 +132,23 @@ def IDF(directory):
     idf = {}
     for single_word, frequency in doc_frequency.items():
         # Calculate the inverse document frequency (IDF) for each word
-        idfscore = math.log10(total_documents / frequency)
+        idfscore = round(math.log10(total_documents / frequency), 1)
         idf[single_word] = idfscore
     return idf
+
+
+def TFIDF(directory):
+    rows = []*len(list(IDF(directory)))
+    tfidf = []
+    for i in range(len(os.listdir(f".\\{directory}\\..\\cleaned"))):
+        tfidf.append(rows)
+    # We now have a matrix of required size
+
+    for filename in os.listdir(directory):
+        if filename.endswith("txt"):
+            file_path = os.path.join(directory, filename)
+            with open(file_path, 'r', encoding="utf-8") as file:
+
 
 
 """
@@ -170,7 +192,7 @@ def TF_IDF(directory):
 
     return matrix
 
- 
+
 # FEATURES
 
 matrixscore = TF_IDF("speeches")
