@@ -67,7 +67,7 @@ def clean_files(input_folder):
         input_file_path = os.path.join(input_folder, file_name)
 
         # Output file path in the "cleaned" directory
-        output_file_path = os.path.join(cleaned_folder_path, file_name)
+        output_file_path = os.path.join(cleaned_folder_path, "Cleaned_"+file_name)
 
         with open(input_file_path, 'r', encoding='utf-8') as input_file:
             # Read the content of the file
@@ -138,17 +138,14 @@ def IDF(directory):
 
 
 def TFIDF(directory):
-    tfidf = []
-    # We now have a matrix of required size
+    tfidf = list(IDF(directory).values())*len(os.listdir(directory))
 
-    for filename in os.listdir(directory):
-        if filename.endswith("txt"):
-            file_path = os.path.join(directory, filename)
+    for fileno in range(len(os.listdir("MyFirstChatbot\\cleaned"))):
+        if os.listdir("MyFirstChatbot\\cleaned")[fileno].endswith("txt"):
+            file_path = os.path.join(directory, os.listdir("MyFirstChatbot\\cleaned")[fileno])
             with open(file_path, 'r', encoding="utf-8") as file:
-                tfidf.append(list(IDF(directory).values()))
-
-
-
+                for word in range(len(list(IDF("MyFirstChatbot\\cleaned").values()))):
+                    tfidf[fileno][word] *=
 
 
 """
