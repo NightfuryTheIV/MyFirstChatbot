@@ -36,37 +36,68 @@ def display_full_names():
         print(f"{firstnamespresidents[elt]} {elt}")
 
 
-def clean_text(text):
-    cleaned_text = ""
-    special_char = ['-',"'"]
-    for char in text:
-        if char.isalpha() and char.isupper():
-            char = char.lower()
+def remove_accents(input_text):
+    # Function we will use to clean the texts
+    accent_mapping = {
+        'é': 'e', 'è': 'e', 'ê': 'e', 'ë': 'e', 'à': 'a', 'â': 'a', 'ä': 'a', 'á': 'a',
+        'ô': 'o', 'ö': 'o', 'ó': 'o', 'ò': 'o', 'û': 'u', 'ü': 'u', 'ù': 'u', 'î': 'i',
+        'ï': 'i', 'í': 'i', 'ç': 'c',
+    }
+    return ''.join(accent_mapping.get(char, char) for char in input_text)
 
-        # Checking if the character is a special symbol
-        if char in special_char:
-            char = ' '
-        if char== '.' or char == '!' or char == '?':
-            char = ''
 
-        cleaned_text += char
+def remove_punctuation(input_text):
+    # Function we will also use to clean the texts
+    punctuation_chars = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
+    translator = str.maketrans(punctuation_chars, ' ' * len(punctuation_chars))
+    return input_text.translate(translator)
+
+
+def clean_files(input_folder):
+    # Just checking if the cleaned folder exists
+    cleaned_folder_path = os.path.join(os.getcwd(), "cleaned")
+    if not os.path.exists(cleaned_folder_path):
+        os.makedirs(cleaned_folder_path)
+
+    # Listing all the files to clean
+    files = [file for file in os.listdir(input_folder) if file.endswith(".txt")]
+
+    for file_name in files:
+        # Input file path
+        input_file_path = os.path.join(input_folder, file_name)
+
+        # Output file path in the "cleaned" directory
+        output_file_path = os.path.join(cleaned_folder_path, "Cleaned_"+file_name)
+
+        with open(input_file_path, 'r', encoding='utf-8') as input_file:
+            # Read the content of the file
+            content = input_file.read()
+
+            # Convert to lowercase
+            content = content.lower()
+
+            # Remove accents if necessary
+            content = remove_accents(content)
+
+            # Remove punctuation characters and replace with space
+            content = remove_punctuation(content)
+
+            # Write the cleaned content to the new file
+            with open(output_file_path, 'w', encoding='utf-8') as output_file:
+                output_file.write(content)
+
+
+def simple_clean(input_text):
+    cleaned_text = input_text.lower()
+    cleaned_text = remove_accents(cleaned_text)
+    cleaned_text = remove_punctuation(cleaned_text)
+
     return cleaned_text
 
 
-def clean_adding():
-    for file in os.listdir("speeches"):
-        with open(f".\\cleaned\\Cleaned_{file}", "w", encoding="utf-8") as clean:
-            with open(f".\\speeches\\{file}", "r") as f:
-                for line in f.readlines():
-                    clean.write(clean_text(line))
-    return True
-
-
-def TF(text:str):
+def TF(text: str):
     frequency = {}
-    cleaned_text = clean_text(text)
-    words = cleaned_text.split(" ")
-    for word in words:
+    for word in text:
         if word not in frequency:
             frequency[word] = 1
         else:
@@ -85,7 +116,7 @@ def IDF(directory):
                 unique_words_in_doc = set()  # Set used to discard duplicates
 
                 for line in file:
-                    line = clean_text(line)
+                    line = simple_clean(line)
                     words = line.strip().split()
                     unique_words_in_doc.update(words)
 
@@ -101,56 +132,35 @@ def IDF(directory):
     idf = {}
     for single_word, frequency in doc_frequency.items():
         # Calculate the inverse document frequency (IDF) for each word
-        idfscore = math.log10(total_documents / frequency)
+        idfscore = round(math.log10(total_documents / frequency), 1)
         idf[single_word] = idfscore
     return idf
 
 
-def TF_IDF(directory):
-    idf = IDF(directory)
-    file_names = os.listdir(f".\\cleaned")
-    nofiles = len(file_names)
-    tfidf = {}
-    os.chdir('cleaned')
+def TFIDF(directory):
+    tfidf = []
+    for i in range(len(os.listdir(directory))):
+        tfidf.append(list(IDF(directory).values()))  # we do this to have a matrix already ready to become a TF-IDF matrix (after we transpose it)
 
-    for word in idf.keys():
-        tfidf[word] = []
-
-    for i in range(nofiles):
-        with open(file_names[i], "r", encoding="utf-8") as f:
-            tf = {}
-            for line in f:
-                dico_temp = TF(line)
-                for word in dico_temp.keys():
-                    if word not in tf.keys():
-                        tf[word] = dico_temp[word]
+    for fileno in range(len(os.listdir("cleaned"))):  # sifting through all the files in the folder using the index fileno of the files
+        if os.listdir("cleaned")[fileno].endswith("txt"):
+            file_path = os.path.join(directory, os.listdir("cleaned")[fileno])
+            with open(file_path, 'r', encoding="utf-8") as file:
+                for word in range(len(list(IDF("cleaned").keys()))):  # this is just to get all the words in the corpus
+                    if list(IDF("cleaned").keys())[word] not in TF(simple_clean(str(file))):  # Since not every word in the corpus is in every file, the TF will have "empty" values, and thus we have to keep that in mind
+                        tfidf[fileno][word] = 0
                     else:
-                        tf[word] += dico_temp[word]
-            dico_tfidf = {}
+                        tfidf[fileno][word] *= TF(simple_clean(str(file)))[list(IDF("cleaned").keys())[word]]  # Getting the word from its index proved trickier than expected...
 
-            for word in tf.keys():
-                word_tfidf = tf[word]*idf[word]
-                dico_tfidf[word] = word_tfidf
+    transpose = [[tfidf[j][i] for j in range(len(tfidf))] for i in range(len(tfidf[0]))]  # this is fairly straight-forward, we did this because looping words inside files was easier than the inverse, but now we need it in order.
 
-            for word in idf.keys():
-                if word not in dico_tfidf.keys():
-                    tfidf[word].append(0)
-                else:
-                    tfidf[word].append(dico_tfidf[word])
-    os.chdir('..')
-
-    # turning this tfidf dictionary into a usable matrix
-    keys = list(tfidf.keys())
-    values = list(tfidf.values())
-    matrix = [[values[j][i] for j in range(len(values)) for i in range(len(values[0]))]]
-
-    return matrix
+    return transpose
 
 
-"""
-FEATURES
-"""
-matrixscore = TF_IDF("speeches")
+
+# FEATURES
+
+matrixscore = TFIDF("cleaned")
 
 
 def least_important_word(TFIDF:list):  # feature 1
@@ -159,7 +169,7 @@ def least_important_word(TFIDF:list):  # feature 1
         for column in range(len(TFIDF[0])):
             if TFIDF[row][column] == 0:
                 least.append(TFIDF[row][column])
-    return least  # This function has to be used with the TF_IDF function
+    return least  # This function has to be used with the TFIDF function
 
 
 def highest_TDIDF(TFIDF:list):  # feature 2
@@ -178,20 +188,40 @@ def highest_TDIDF(TFIDF:list):  # feature 2
     return highest
 
 
-def highest_chirac(TFIDF:list):  # feature 3
+def highest_chirac():  # feature 3
+    with open("cleaned\\Cleaned_Nomination_Chirac1.txt", "r") as chirac1:
+        TF1 = TF(chirac1.read())
+        maxi = TF1[list(TF1.keys())[0]]
+        for word in TF1:
+            if TF1[word] > TF1[maxi]:
+                maxi = word
+
+    with open("cleaned\\Cleaned_Nomination_Chirac2.txt", "r") as chirac2:
+        TF2 = TF(chirac2.read())
+        for word in TF2:
+            if TF2[word] > TF2[maxi]:
+                maxi = word
+
     chirac = []
-    maxi = TFIDF[0][0]
-    for row in range(len(TFIDF)):
-        for column in range(2):  # because chirac's speeches are the first 2
-            if TFIDF[row][column] > maxi:
-                maxi = TFIDF[row][column]
 
-    for row in range(len(TFIDF)):
-        for col in range(len(TFIDF[0])):
-            if TFIDF[row][col] == maxi:
-                chirac.append(matrixscore[list(matrixscore)[row]])
+    with open("cleaned\\Cleaned_Nomination_Chirac1.txt", "r") as chirac1:
+        TF1 = TF(chirac1.read())
+        for word, value in TF1.items():
+            if value == maxi:
+                chirac.append(word)
 
-    return chirac
+    with open("cleaned\\Cleaned_Nomination_Chirac2.txt", "r") as chirac2:
+        TF2 = TF(chirac2.read())
+        for word, value in TF2.items():
+            if value == maxi:
+                chirac.append(word)
+
+    filtered = []  # Filtering out the duplicates
+    for elt in chirac:
+        if elt not in filtered:
+            filtered.append(elt)
+
+    return filtered
 
 
 def nation(directory):  # feature 4
