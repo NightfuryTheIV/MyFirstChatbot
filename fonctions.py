@@ -138,61 +138,29 @@ def IDF(directory):
 
 
 def TFIDF(directory):
-    tfidf = list(IDF(directory).values())*len(os.listdir(directory))
+    tfidf = []
+    for i in range(len(os.listdir(directory))):
+        tfidf.append(list(IDF(directory).values()))  # we do this to have a matrix already ready to become a TF-IDF matrix (after we transpose it)
 
-    for fileno in range(len(os.listdir("MyFirstChatbot\\cleaned"))):
-        if os.listdir("MyFirstChatbot\\cleaned")[fileno].endswith("txt"):
-            file_path = os.path.join(directory, os.listdir("MyFirstChatbot\\cleaned")[fileno])
+    for fileno in range(len(os.listdir("cleaned"))):  # sifting through all the files in the folder using the index fileno of the files
+        if os.listdir("cleaned")[fileno].endswith("txt"):
+            file_path = os.path.join(directory, os.listdir("cleaned")[fileno])
             with open(file_path, 'r', encoding="utf-8") as file:
-                for word in range(len(list(IDF("MyFirstChatbot\\cleaned").values()))):
-                    tfidf[fileno][word] *=
-
-
-"""
-def TF_IDF(directory):
-    idf = IDF(directory)
-    file_names = os.listdir(f".\\cleaned")
-    nofiles = len(file_names)
-    tfidf = {}
-    os.chdir('cleaned')
-
-    for word in idf.keys():
-        tfidf[word] = []
-
-    for i in range(nofiles):
-        with open(file_names[i], "r", encoding="utf-8") as f:
-            tf = {}
-            for line in f:
-                dico_temp = TF(line)
-                for word in dico_temp.keys():
-                    if word not in tf.keys():
-                        tf[word] = dico_temp[word]
+                for word in range(len(list(IDF("cleaned").keys()))):  # this is just to get all the words in the corpus
+                    if list(IDF("cleaned").keys())[word] not in TF(simple_clean(str(file))):  # Since not every word in the corpus is in every file, the TF will have "empty" values, and thus we have to keep that in mind
+                        tfidf[fileno][word] = 0
                     else:
-                        tf[word] += dico_temp[word]
-            dico_tfidf = {}
+                        tfidf[fileno][word] *= TF(simple_clean(str(file)))[list(IDF("cleaned").keys())[word]]  # Getting the word from its index proved trickier than expected...
 
-            for word in tf.keys():
-                word_tfidf = tf[word]*idf[word]
-                dico_tfidf[word] = word_tfidf
+    transpose = [[tfidf[j][i] for j in range(len(tfidf))] for i in range(len(tfidf[0]))]  # this is fairly straight-forward, we did this because looping words inside files was easier than the inverse, but now we need it in order.
 
-            for word in idf.keys():
-                if word not in dico_tfidf.keys():
-                    tfidf[word].append(0)
-                else:
-                    tfidf[word].append(dico_tfidf[word])
-    os.chdir('..')
+    return transpose
 
-    # turning this tfidf dictionary into a usable matrix
-    keys = list(tfidf.keys())
-    values = list(tfidf.values())
-    matrix = [[values[j][i] for j in range(len(values)) for i in range(len(values[0]))]]
-
-    return matrix
 
 
 # FEATURES
 
-matrixscore = TF_IDF("speeches")
+matrixscore = TFIDF("cleaned")
 
 
 def least_important_word(TFIDF:list):  # feature 1
@@ -201,7 +169,7 @@ def least_important_word(TFIDF:list):  # feature 1
         for column in range(len(TFIDF[0])):
             if TFIDF[row][column] == 0:
                 least.append(TFIDF[row][column])
-    return least  # This function has to be used with the TF_IDF function
+    return least  # This function has to be used with the TFIDF function
 
 
 def highest_TDIDF(TFIDF:list):  # feature 2
@@ -220,20 +188,40 @@ def highest_TDIDF(TFIDF:list):  # feature 2
     return highest
 
 
-def highest_chirac(TFIDF:list):  # feature 3
+def highest_chirac():  # feature 3
+    with open("cleaned\\Cleaned_Nomination_Chirac1.txt", "r") as chirac1:
+        TF1 = TF(chirac1.read())
+        maxi = TF1[list(TF1.keys())[0]]
+        for word in TF1:
+            if TF1[word] > TF1[maxi]:
+                maxi = word
+
+    with open("cleaned\\Cleaned_Nomination_Chirac2.txt", "r") as chirac2:
+        TF2 = TF(chirac2.read())
+        for word in TF2:
+            if TF2[word] > TF2[maxi]:
+                maxi = word
+
     chirac = []
-    maxi = TFIDF[0][0]
-    for row in range(len(TFIDF)):
-        for column in range(2):  # because chirac's speeches are the first 2
-            if TFIDF[row][column] > maxi:
-                maxi = TFIDF[row][column]
 
-    for row in range(len(TFIDF)):
-        for col in range(len(TFIDF[0])):
-            if TFIDF[row][col] == maxi:
-                chirac.append(matrixscore[list(matrixscore)[row]])
+    with open("cleaned\\Cleaned_Nomination_Chirac1.txt", "r") as chirac1:
+        TF1 = TF(chirac1.read())
+        for word, value in TF1.items():
+            if value == maxi:
+                chirac.append(word)
 
-    return chirac
+    with open("cleaned\\Cleaned_Nomination_Chirac2.txt", "r") as chirac2:
+        TF2 = TF(chirac2.read())
+        for word, value in TF2.items():
+            if value == maxi:
+                chirac.append(word)
+
+    filtered = []  # Filtering out the duplicates
+    for elt in chirac:
+        if elt not in filtered:
+            filtered.append(elt)
+
+    return filtered
 
 
 def nation(directory):  # feature 4
@@ -302,4 +290,3 @@ def words_said_by_all_presidents(dico):
     words_count = len(list_all_said_words)
     print(f"There are {words_count} words said by all presidents")
     return list_all_said_words
-"""
