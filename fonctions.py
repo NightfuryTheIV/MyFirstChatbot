@@ -314,3 +314,11 @@ def question_vector(tokens:list):
     for key, value in TF_question.items():
         TF_IDF_question[key] = value * IDF("cleaned")[key]
     return TF_IDF_question
+
+
+def scalar(v1:list, v2:list):
+    value = 0
+    for i in range(len(v1)):
+        value += v1[i]*v2[i]
+    return value
+
