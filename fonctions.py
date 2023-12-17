@@ -14,8 +14,6 @@ for i in range(len(os.listdir("cleaned"))):
                 if word not in all_words:
                     all_words.append(word)
 
-print(all_words)
-
 
 def no_double(lst:list):
     single = []
@@ -161,8 +159,8 @@ def TFIDF(directory):
         if os.listdir("cleaned")[fileno].endswith("txt"):
             file_path = os.path.join(directory, os.listdir("cleaned")[fileno])
             with open(file_path, 'r', encoding="utf-8") as file:
-                for word in range(len(list(IDF("cleaned").keys()))):  # this is just to get all the words in the corpus
-                    if list(IDF("cleaned").keys())[word] not in TF(simple_clean(str(file))):  # Since not every word in the corpus is in every file, the TF will have "empty" values, and thus we have to keep that in mind
+                for word in range(len(all_words)):
+                    if all_words[word] not in TF(simple_clean(str(file))):  # Since not every word in the corpus is in every file, the TF will have "empty" values, and thus we have to keep that in mind
                         tfidf[fileno][word] = 0
                     else:
                         tfidf[fileno][word] *= TF(simple_clean(str(file)))[list(IDF("cleaned").keys())[word]]  # Getting the word from its index proved trickier than expected...
@@ -171,8 +169,6 @@ def TFIDF(directory):
 
     return transpose
 
-
-# FEATURES
 
 matrixscore = TFIDF("cleaned")
 
@@ -197,7 +193,7 @@ def highest_TDIDF(TFIDF:list):  # feature 2
     for row in range(len(TFIDF)):
         for col in range(len(TFIDF[0])):
             if TFIDF[row][col] == maxi:
-                highest.append(list(IDF("cleaned"))[row])  # long line to get the word, not the index
+                highest.append(all_words[row])  # long line to get the word, not the index
 
     return highest
 
@@ -294,24 +290,27 @@ def find_first_president_to_mention_ecology_or_climate(directory):
 
 
 def tokenize(question:str):
+    return simple_clean(question).split(" ")
+
+
+def question_words(tokens:list):
+    meaningful_words = []  # filtering out the terms that aren't in the corpus
+    for j in range(len(tokens)):
+        if tokens[j] in all_words:
+            meaningful_words.append(tokens[i])
+    return meaningful_words
+
+
+def question_vector(tokens:list):
     TF_question = {}
-    question_clean = simple_clean(question).split(" ")
+    for j in range(len(tokens)):
+        if tokens[j] in TF_question:
+            TF_question[tokens[j]] += 1
+        else:
+            TF_question[tokens[j]] = 1
 
-    important_words = []
-    #important words
-    for i in range(len(question_clean)):
-        if question_clean[i] in IDF("cleaned").values():
-            important_words.append(question_clean[i])
-"""
-#TF important words
-for i in range (len(important_words)):
-    if important_words[i] in TF_question_word:
-        TF_question_word[important_words[i]]=TF_question_word[important_words[i]]+1/len(important_words)
-    else:
-        TF_question_word[important_words[i]]=1/len(important_words)
-TF_IDF_question_word={}
+    TF_IDF_question = {}
 
-for key,value in TF_question_word.items():
-    TF_IDF_question_word[key]=value*IDF[key]
-print (TF_IDF_question_word)
-"""
+    for key, value in TF_question.items():
+        TF_IDF_question[key] = value * IDF("cleaned")[key]
+    return TF_IDF_question
