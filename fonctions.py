@@ -323,5 +323,12 @@ def scalar(v1:list, v2:list):
     return value
 
 
+def norm(a:list):
+    somme = 0
+    for coordinate in a:
+        somme += coordinate**2
+    return math.sqrt(somme)
+
+
 def similarity(v1:list, v2:list):
     return scalar(v1, v2) / (norm(v1) * norm(v2))
