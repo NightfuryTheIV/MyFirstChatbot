@@ -157,7 +157,6 @@ def TFIDF(directory):
     return transpose
 
 
-
 # FEATURES
 
 matrixscore = TFIDF("cleaned")
@@ -183,7 +182,7 @@ def highest_TDIDF(TFIDF:list):  # feature 2
     for row in range(len(TFIDF)):
         for col in range(len(TFIDF[0])):
             if TFIDF[row][col] == maxi:
-                highest.append(matrixscore[list(matrixscore)[row]])  # long line to get the word, not the index
+                highest.append(list(IDF("cleaned"))[row])  # long line to get the word, not the index
 
     return highest
 
@@ -279,14 +278,3 @@ def find_first_president_to_mention_ecology_or_climate(directory):
     return president_name
 
 
-def words_said_by_all_presidents(dico):
-    list_all_said_words = []
-    presidents_count = len(dico)  # Assuming dico is a dictionary containing TF-IDF values for each president
-
-    for word, values in dico.items():
-        if sum(1 for value in values if value >= 0.0) == presidents_count and word not in least_important_word(matrixscore):
-            list_all_said_words.append(word)
-
-    words_count = len(list_all_said_words)
-    print(f"There are {words_count} words said by all presidents")
-    return list_all_said_words

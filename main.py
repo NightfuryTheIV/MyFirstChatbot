@@ -24,8 +24,6 @@ elif choix1 == 4:
     print(nation(TF_IDF("speeches")))
 elif choix1 == 5:
     print(find_first_president_to_mention_ecology_or_climate("speeches"))
-elif choix1 == 6:
-    print(words_said_by_all_presidents(TF("speeches")))
 else:
     print("Exiting.")
 """
