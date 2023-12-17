@@ -54,7 +54,7 @@ def remove_accents(input_text):
     accent_mapping = {
         'é': 'e', 'è': 'e', 'ê': 'e', 'ë': 'e', 'à': 'a', 'â': 'a', 'ä': 'a', 'á': 'a',
         'ô': 'o', 'ö': 'o', 'ó': 'o', 'ò': 'o', 'û': 'u', 'ü': 'u', 'ù': 'u', 'î': 'i',
-        'ï': 'i', 'í': 'i', 'ç': 'c',
+        'ï': 'i', 'í': 'i', 'ç': 'c', 'œ': 'oe'
     }
     return ''.join(accent_mapping.get(char, char) for char in input_text)
 
@@ -109,12 +109,8 @@ def simple_clean(input_text):
 
 
 def TF(text: str):
-    frequency = {}
-    for word in text:
-        if word not in frequency:
-            frequency[word] = 1
-        else:
-            frequency[word] += 1
+    words = text.strip().split()
+    frequency = {word: words.count(word) for word in set(words)}
     return frequency
 
 
@@ -150,27 +146,51 @@ def IDF(directory):
     return idf
 
 
-def TFIDF(directory):
-    tfidf = []
-    for i in range(len(os.listdir(directory))):
-        tfidf.append(list(IDF(directory).values()))  # we do this to have a matrix already ready to become a TF-IDF matrix (after we transpose it)
+def word_idf(directory, word):
+    total_documents = len(os.listdir(directory))
 
-    for fileno in range(len(os.listdir("cleaned"))):  # sifting through all the files in the folder using the index fileno of the files
-        if os.listdir("cleaned")[fileno].endswith("txt"):
-            file_path = os.path.join(directory, os.listdir("cleaned")[fileno])
-            with open(file_path, 'r', encoding="utf-8") as file:
-                for word in range(len(all_words)):
-                    if all_words[word] not in TF(simple_clean(str(file))):  # Since not every word in the corpus is in every file, the TF will have "empty" values, and thus we have to keep that in mind
-                        tfidf[fileno][word] = 0
-                    else:
-                        tfidf[fileno][word] *= TF(simple_clean(str(file)))[list(IDF("cleaned").keys())[word]]  # Getting the word from its index proved trickier than expected...
+    # Count the number of documents containing the word
+    document_frequency = sum(1 for filename in os.listdir(directory) if word_in_file(os.path.join(directory, filename), word))
 
-    transpose = [[tfidf[j][i] for j in range(len(tfidf))] for i in range(len(tfidf[0]))]  # this is fairly straight-forward, we did this because looping words inside files was easier than the inverse, but now we need it in order.
-
-    return transpose
+    if document_frequency > 0:
+        idf = round(math.log10(total_documents / document_frequency), 2)
+    else:
+        idf = 0
+    return idf
 
 
-matrixscore = TFIDF("cleaned")
+def word_in_file(file_path, word):  # We only use it in case something goes horribly wrong, we can consider it a safety belt
+    with open(file_path, 'r', encoding='utf-8') as text:
+        return word in text.read().strip()
+
+
+def TFIDF_dict(directory):
+    # Dictionary to store TF values for each word in each file
+    tf_values = {word: [0] * len(os.listdir(directory)) for word in all_words}
+
+    # Calculate TF values for each word in each file
+    for i, filename in enumerate(os.listdir(directory)):
+        if filename.endswith(".txt"):
+            file_path = os.path.join(directory, filename)
+
+            with open(file_path, 'r', encoding='utf-8') as file:
+                # Calculate TF values using the provided TF function
+                tf_dict = TF(file.read().strip())
+
+                # Update TF values only for words in unique_words
+                for word in set(tf_dict.keys()) & set(all_words):
+                    tf_values[word][i] = tf_dict[word]
+
+    # Dictionary to store IDF scores for each word
+    idf_scores = {word: word_idf(directory, word) for word in all_words}
+
+    # Dictionary to store TF-IDF scores for each word in each file
+    tf_idf_matrix = {word: [tf_values[word][k] * idf_scores[word] for k in range(len(tf_values[word]))] for word in all_words}
+
+    return tf_idf_matrix
+
+
+matrixscore = TFIDF_dict("cleaned")
 
 
 def least_important_word(TFIDF:list):  # feature 1
@@ -332,3 +352,8 @@ def norm(a:list):
 
 def similarity(v1:list, v2:list):
     return scalar(v1, v2) / (norm(v1) * norm(v2))
+
+
+def relevancy(corpus_TFIDF, question_TFIDF, filenames:list):
+    similarities = {}
+

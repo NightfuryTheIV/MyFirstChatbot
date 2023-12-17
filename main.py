@@ -1,5 +1,6 @@
 from os import listdir
 from fonctions import *
+import math
 speech = os.listdir("speeches")
 
 presidents = presidentNameExtract(speech)
@@ -30,4 +31,3 @@ else:
 
 TFIDF("cleaned")
 """
-
