@@ -290,3 +290,29 @@ def words_said_by_all_presidents(dico):
     words_count = len(list_all_said_words)
     print(f"There are {words_count} words said by all presidents")
     return list_all_said_words
+
+
+
+
+
+input_text=input()
+TF_question_word={}
+question_clean=simple_clean(input_text).split()
+
+important_words=[]
+#important words
+for i in range (len(question_clean)):
+    if question_clean[i] in dico:
+        important_words.append(question_clean[i])
+
+#TF important words
+for i in range (len(important_words)):
+    if important_words[i] in TF_question_word:
+        TF_question_word[important_words[i]]=TF_question_word[important_words[i]]+1/len(important_words)
+    else:
+        TF_question_word[important_words[i]]=1/len(important_words)
+TF_IDF_question_word={}
+
+for key,value in TF_question_word.items():
+    TF_IDF_question_word[key]=value*IDF[key]
+print (TF_IDF_question_word)
