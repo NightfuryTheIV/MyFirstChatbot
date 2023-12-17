@@ -395,3 +395,40 @@ def speeches_eq(path):  # This will return the equivalent file in the speeches f
     path_chain[-1] = path_chain[-1][8:]
     real_path = "\\".join(path_chain)
     return real_path
+
+
+
+
+
+
+
+
+QUESTION_STARTERS = {
+    "comment": "Après analyse, ",
+    "pourquoi": "Car, ",
+    "qui": "La personne responsable de cela est ",
+    "combien": "Au total il y a ",
+    "est-ce que": "Il est possible que ",
+    "peut-on": "Oui, il est possible de ",
+    "serait-il possible": "Il est envisageable de ",
+    "comment faire": "Voici comment procéder : ",
+    "quelle est la raison": "La raison principale est ",
+    "est-ce que tu peux": "Oui, je peux ",
+    "est-ce que tu sais": "Oui, je sais que ",
+    "peux-tu": "Oui, je peux ",
+}
+
+reponse = "###    mettre la phrase réponse    ###"
+
+
+def final_answer(question:str, phrase:str):
+    phrase = phrase.strip() + "."
+    for key in QUESTION_STARTERS:
+        if question.startswith(key,0,25):
+            phrase = phrase[0].upper() + phrase[1:]
+            phrase = QUESTION_STARTERS[key] + phrase
+    print(phrase)
+
+
+question = input("Hello sir! Might you have a question for humble me, you shall pose it here in this dedicated area. ")
+final_answer(question, reponse)
