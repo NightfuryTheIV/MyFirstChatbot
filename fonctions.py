@@ -190,7 +190,7 @@ def TFIDF_dict(directory):
     return tf_idf_matrix
 
 
-matrixscore = TFIDF_dict("cleaned")
+president_tfidf = TFIDF_dict("cleaned")
 
 
 def least_important_word(TFIDF:list):  # feature 1
@@ -354,6 +354,44 @@ def similarity(v1:list, v2:list):
     return scalar(v1, v2) / (norm(v1) * norm(v2))
 
 
-def relevancy(corpus_TFIDF, question_TFIDF, filenames:list):
+def relevancy(question_TFIDF, filenames):  # I don't believe we need the corpus TF-IDF...
     similarities = {}
+    current = os.getcwd()
 
+    for i in range(len(os.listdir(filenames))):
+        filepath = os.path.join(current, "cleaned", os.listdir(filenames)[i])
+        with open(filepath, 'r') as text:
+            singleline = ""
+            for line in text.readlines():
+                singleline += line
+
+            doc_token = question_vector(question_words(tokenize(singleline)))
+
+            question_copy = question_TFIDF
+
+            for key in question_copy.keys():
+                if key not in doc_token.keys():
+                    del question_copy[key]
+
+            for key in doc_token.keys():
+                if key not in question_copy.keys():
+                    del doc_token[key]
+            # Now we have vectors of the same size
+
+            similarities[filepath] = similarity(question_copy, list(doc_token.keys()))
+
+    maximum = similarities[list(similarities.keys())[0]]
+    maxkey = ""
+    for key, value in similarities.items():
+        if value > maximum:
+            maxkey = key
+
+    return maxkey
+
+
+def speeches_eq(path):  # This will return the equivalent file in the speeches folder
+    path_chain = path.split("\\")
+    path_chain[-2] = "speeches"
+    path_chain[-1] = path_chain[-1][8:]
+    real_path = "\\".join(path_chain)
+    return real_path
