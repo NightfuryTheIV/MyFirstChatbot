@@ -322,3 +322,6 @@ def scalar(v1:list, v2:list):
         value += v1[i]*v2[i]
     return value
 
+
+def similarity(v1:list, v2:list):
+    return scalar(v1, v2) / (norm(v1) * norm(v2))
