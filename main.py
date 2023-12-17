@@ -26,6 +26,8 @@ elif choix1 == 5:
     print(find_first_president_to_mention_ecology_or_climate("speeches"))
 else:
     print("Exiting.")
-"""
+
 
 TFIDF("cleaned")
+"""
+

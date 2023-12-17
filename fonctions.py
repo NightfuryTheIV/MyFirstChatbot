@@ -2,6 +2,21 @@ import math
 import os
 
 
+all_words = []
+path = os.getcwd()
+print(path)
+
+for i in range(len(os.listdir("cleaned"))):
+    filepath = os.path.join(path, "cleaned", list(os.listdir("cleaned"))[i])
+    with open(filepath, "r") as file:
+        for line in file.readlines():
+            for word in line.split():
+                if word not in all_words:
+                    all_words.append(word)
+
+print(all_words)
+
+
 def no_double(lst:list):
     single = []
     for elt in lst:
@@ -278,3 +293,25 @@ def find_first_president_to_mention_ecology_or_climate(directory):
     return president_name
 
 
+def tokenize(question:str):
+    TF_question = {}
+    question_clean = simple_clean(question).split(" ")
+
+    important_words = []
+    #important words
+    for i in range(len(question_clean)):
+        if question_clean[i] in IDF("cleaned").values():
+            important_words.append(question_clean[i])
+"""
+#TF important words
+for i in range (len(important_words)):
+    if important_words[i] in TF_question_word:
+        TF_question_word[important_words[i]]=TF_question_word[important_words[i]]+1/len(important_words)
+    else:
+        TF_question_word[important_words[i]]=1/len(important_words)
+TF_IDF_question_word={}
+
+for key,value in TF_question_word.items():
+    TF_IDF_question_word[key]=value*IDF[key]
+print (TF_IDF_question_word)
+"""
