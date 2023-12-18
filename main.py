@@ -6,8 +6,6 @@ speech = os.listdir("speeches")
 presidents = presidentNameExtract(speech)
 # The dictionary associating the last names with first names is in fonctions.py, line 30.
 
-display_full_names()
-
 clean_files("speeches")
 
 # TF, IDF, and TF-IDF functions are in fonctions.py, from line 65 to line 147
@@ -31,3 +29,5 @@ else:
 
 TFIDF("cleaned")
 """
+
+

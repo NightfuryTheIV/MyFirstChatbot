@@ -6,8 +6,8 @@ all_words = []
 path = os.getcwd()
 print(path)
 
-for i in range(len(os.listdir("cleaned"))):
-    filepath = os.path.join(path, "cleaned", list(os.listdir("cleaned"))[i])
+for w in range(len(os.listdir("cleaned"))):
+    filepath = os.path.join(path, "cleaned", list(os.listdir("cleaned"))[w])
     with open(filepath, "r") as file:
         for line in file.readlines():
             for word in line.split():
@@ -317,7 +317,7 @@ def question_words(tokens:list):
     meaningful_words = []  # filtering out the terms that aren't in the corpus
     for j in range(len(tokens)):
         if tokens[j] in all_words:
-            meaningful_words.append(tokens[i])
+            meaningful_words.append(tokens[j])
     return meaningful_words
 
 
@@ -336,11 +336,12 @@ def question_vector(tokens:list):
     return TF_IDF_question
 
 
-def scalar(v1:list, v2:list):
-    value = 0
-    for i in range(len(v1)):
-        value += v1[i]*v2[i]
-    return value
+def scalar(vector1:list, vector2:list):
+    scalar_value = 0
+
+    for i in range(len(vector1)):
+        scalar_value += vector1[i] * vector2[i]
+    return scalar_value
 
 
 def norm(a:list):
@@ -351,7 +352,10 @@ def norm(a:list):
 
 
 def similarity(v1:list, v2:list):
-    return scalar(v1, v2) / (norm(v1) * norm(v2))
+    result = 0
+    if norm(v1) * norm(v2) != 0:
+        result = scalar(v1, v2) / (norm(v1) * norm(v2))
+    return result
 
 
 def relevancy(question_TFIDF, filenames):  # I don't believe we need the corpus TF-IDF...
@@ -359,26 +363,19 @@ def relevancy(question_TFIDF, filenames):  # I don't believe we need the corpus 
     current = os.getcwd()
 
     for i in range(len(os.listdir(filenames))):
-        filepath = os.path.join(current, "cleaned", os.listdir(filenames)[i])
+        filepath = os.path.join(current, "cleaned", "Cleaned_" + os.listdir(filenames)[i])
         with open(filepath, 'r') as text:
             singleline = ""
             for line in text.readlines():
                 singleline += line
 
             doc_token = question_vector(question_words(tokenize(singleline)))
+            doc_copy = doc_token
 
             question_copy = question_TFIDF
-
-            for key in question_copy.keys():
-                if key not in doc_token.keys():
-                    del question_copy[key]
-
-            for key in doc_token.keys():
-                if key not in question_copy.keys():
-                    del doc_token[key]
             # Now we have vectors of the same size
 
-            similarities[filepath] = similarity(question_copy, list(doc_token.keys()))
+            similarities[filepath] = similarity(list(question_copy.values()), list(doc_copy.values()))
 
     maximum = similarities[list(similarities.keys())[0]]
     maxkey = ""
@@ -397,10 +394,28 @@ def speeches_eq(path):  # This will return the equivalent file in the speeches f
     return real_path
 
 
+def response(question):
+    vector = question_vector(question_words(tokenize(question)))
+    keyword = list(vector)[0]
 
+    for key, value in vector.items():
+        if value > vector[keyword]:
+            keyword = key
 
+    most_relevant_doc = speeches_eq(relevancy(vector, "speeches"))
 
+    with open(most_relevant_doc, "r") as doc:
+        save_line = ""
 
+        for linee in doc.read().split("\n"):
+            if keyword in linee:
+                save_line = linee
+
+        print("question: ", question)
+        print("Relevant document returned: ", most_relevant_doc)
+        print("Word that is likely to be what you're looking for: ", keyword)
+        print("Response generated: ", save_line)
+        return save_line
 
 
 QUESTION_STARTERS = {
@@ -421,7 +436,7 @@ QUESTION_STARTERS = {
 reponse = "###    mettre la phrase réponse    ###"
 
 
-def final_answer(question:str, phrase:str):
+def final_answer(question: str, phrase: str):
     phrase = phrase.strip() + "."
     for key in QUESTION_STARTERS:
         if question.startswith(key,0,25):
