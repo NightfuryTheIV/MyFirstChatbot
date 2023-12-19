@@ -415,7 +415,11 @@ def response(question):
         print("Relevant document returned: ", most_relevant_doc)
         print("Word that is likely to be what you're looking for: ", keyword)
         print("Response generated: ", save_line)
-        return save_line
+    return save_line
+
+
+def conveniency(question):
+    return response(question_vector(question_words(tokenize(question))))
 
 
 QUESTION_STARTERS = {
