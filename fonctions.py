@@ -446,6 +446,8 @@ def final_answer(question: str, phrase: str):
         if question.startswith(key,0,25):
             phrase = phrase[0].upper() + phrase[1:]
             phrase = QUESTION_STARTERS[key] + phrase
+        else:
+            phrase = "Sorry, I don't understand your query."
     print(phrase)
 
 
