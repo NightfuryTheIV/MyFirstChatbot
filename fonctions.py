@@ -1,5 +1,6 @@
 import math
 import os
+from time import sleep
 
 
 all_words = []
@@ -456,6 +457,7 @@ def final_answer(question: str, phrase: str):
 
 
 def monologue():
+    print("\n")
     monolog = [
         "First step was to split your question into tokens that we use in three other functions to process everything we need to in order to give a valid answer.",
         "This function does work, there's no issue on this end.",
@@ -464,7 +466,7 @@ def monologue():
         "Third step is to find the document in which the answer is the most likely to be. In theory it works.",
         "Last step is to pick out the first line of the document in which the keyword is but for some obscure reason, this step specifically doesn't return anything."]
 
-    max_line_length = 0
+    max_line_length = 0  # We will use this to properly center the text to come
     for line in monolog:
         if len(line) > max_line_length:
             max_line_length = len(line)
@@ -474,13 +476,14 @@ def monologue():
     for topbar in range(max_line_length):
         first_line += "_"
     first_line = " " + first_line
-    print(first_line)
+    print(first_line)  # This just sets the border of the paragraph
 
     for line in monolog:
         emptyspace = ""
-        for emptyspaces in range(max_line_length - len(line)):
+        for emptyspaces in range(max_line_length - len(line)):  # Empty spaces to fill out the difference between the maximum length of a line and the length of the current line
             emptyspace += " "
         print("| " + emptyspace[2:(len(emptyspace)+2)//2] + line + emptyspace[(len(emptyspace)+2)//2:] + " |")  # This centers the text
+        sleep(4)
 
     print(first_line)
 
@@ -489,20 +492,24 @@ def boot_up():
     action1 = input(
         "Hello there! You can test out our application by typing Y, F to see our features, or any other key to exit. ")
     if action1 == "Y":
-        question = input("Hello sir! Might you have a question for us, you shall pose it here in this dedicated area. ")
-        final_answer(question, reponse)
-        if response(question) == "":
-            print("There might be an issue with the answer generation again.")
-            action2 = input(
-                "But I can explain to you in a simple way how it's supposed to generate an answer if you'd like. [Y for yes, any other key for no] ")
-            if action2 == "Y":
-                monologue()
+        question = input("Might you have a question for us, you shall pose it here in this dedicated area (type no to cancel). ")
+        if question != "no":
+            if response(question) == "":
+                print("There might be an issue with the answer generation again.")
+                action2 = input("But I can explain to you in a simple way how it's supposed to generate an answer if you'd like. [Y for yes, any other key for no] ")
+                if action2 == "Y":
+                    monologue()
+                    print("Exiting.")
+                else:
+                    print("Very well then. Have a nice day.")
             else:
-                print("Very well then. Have a nice day.")
+                final_answer(question, reponse)
+        else:
+            print("Exiting.")
 
     elif action1 == "F":
 
-        choix1 = input("")
+        choix1 = input("Type 1 to see the list of the least important words of the campus,\n     2 to see the MOST important (does not work as intended),\n     3 to see the most convincing word used by Jacques Chirac,\n     4 to see the president that called for patriotism the most,\n  or 5 to see the first president that mentions climate as an campaign argument.\n >>> ")
         if choix1 == "1":
             print(least_important_word())
         elif choix1 == "2":
