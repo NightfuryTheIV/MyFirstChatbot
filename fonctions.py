@@ -193,26 +193,26 @@ def TFIDF_dict(directory):
 president_tfidf = TFIDF_dict("cleaned")
 
 
-def least_important_word(TFIDF:list):  # feature 1
+def least_important_word():  # feature 1
     least = []
-    for row in range(len(TFIDF)):
-        for column in range(len(TFIDF[0])):
-            if TFIDF[row][column] == 0:
-                least.append(TFIDF[row][column])
+    for row in range(len(president_tfidf)):
+        for column in range(len(president_tfidf[0])):
+            if president_tfidf[row][column] == 0:
+                least.append(president_tfidf[row][column])
     return least  # This function has to be used with the TFIDF function
 
 
-def highest_TDIDF(TFIDF:list):  # feature 2
+def highest_TDIDF():  # feature 2
     highest = []
-    maxi = TFIDF[0][0]
-    for row in range(len(TFIDF)):
-        for column in range(len(TFIDF[0])):
-            if TFIDF[row][column] > maxi:
-                maxi = TFIDF[row][column]
+    maxi = president_tfidf[0][0]
+    for row in range(len(president_tfidf)):
+        for column in range(len(president_tfidf[0])):
+            if president_tfidf[row][column] > maxi:
+                maxi = president_tfidf[row][column]
 
-    for row in range(len(TFIDF)):
-        for col in range(len(TFIDF[0])):
-            if TFIDF[row][col] == maxi:
+    for row in range(len(president_tfidf)):
+        for col in range(len(president_tfidf[0])):
+            if president_tfidf[row][col] == maxi:
                 highest.append(all_words[row])  # long line to get the word, not the index
 
     return highest
@@ -307,6 +307,10 @@ def find_first_president_to_mention_ecology_or_climate(directory):
             break
     print(f"First president to speak of climat or écologie is {president_name}")
     return president_name
+
+
+
+
 
 
 def tokenize(question:str):
